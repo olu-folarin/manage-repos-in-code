@@ -1,0 +1,10 @@
+# provider binaries
+.terraform/
+
+terraform.tfstate
+terraform.tfstate.backup
+
+*.tfvars
+
+# design notes
+DESIGN.md
