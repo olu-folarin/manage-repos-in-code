@@ -1,18 +1,30 @@
-resource "github_branch_protection" "main" {
+resource "github_repository_ruleset" "main" {
   for_each = { for name, repo in local.repos : name => repo if repo.protect_main }
 
-  repository_id = github_repository.managed[each.key].node_id
-  pattern       = "main"
+  name        = "protect-main"
+  repository  = each.key
+  target      = "branch"
+  enforcement = "active"
 
-  required_pull_request_reviews {
-    required_approving_review_count = 1
-    dismiss_stale_reviews           = true
+  conditions {
+    ref_name {
+      include = ["~DEFAULT_BRANCH"]
+      exclude = []
+    }
   }
 
-  require_conversation_resolution = true
-  require_signed_commits          = true
-  required_linear_history         = true
-  allows_force_pushes             = false
-  allows_deletions                = false
-  enforce_admins                  = true
+  rules {
+    deletion                = true
+    non_fast_forward        = true
+    required_linear_history = true
+    required_signatures     = false
+
+    pull_request {
+      dismiss_stale_reviews_on_push     = true
+      require_code_owner_review         = false
+      require_last_push_approval        = false
+      required_approving_review_count   = 0
+      required_review_thread_resolution = true
+    }
+  }
 }
