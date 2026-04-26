@@ -14,4 +14,5 @@ resource "github_branch_protection" "main" {
   required_linear_history         = true
   allows_force_pushes             = false
   allows_deletions                = false
+  enforce_admins                  = true
 }
